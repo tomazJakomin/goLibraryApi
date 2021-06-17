@@ -21,8 +21,18 @@ func NewLoanRepository(db *gorm.DB) *LoanRepository {
 
 func (repo *LoanRepository) GetActiveLoansForUser(user models.User) (*[]models.Loan, error) {
 	var loan []models.Loan
-	fmt.Println(user.ID)
 	result := repo.db.Where("user_id = ? AND active = ?", user.ID, true).Find(&loan)
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return &loan, nil
+}
+
+func (repo *LoanRepository) GetActiveLoansForUserIdAndBookId(userId int, bookId int) (*[]models.Loan, error) {
+	var loan []models.Loan
+	result := repo.db.Where("user_id = ? AND book_id = ? AND active = ?", userId, bookId, true).Find(&loan)
 
 	if result.Error != nil {
 		return nil, result.Error
