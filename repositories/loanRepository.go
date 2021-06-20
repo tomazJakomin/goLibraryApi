@@ -10,7 +10,7 @@ type LoanRepository struct {
 	db *gorm.DB
 }
 
-const decrease_book_quantity_query string = "UPDATE books SET quantity = quantity + 1 WHERE id = ?"
+const increase_book_quantity_query string = "UPDATE books SET quantity = quantity + 1 WHERE id = ?"
 const deactivate_loan_query string = "UPDATE loans SET active = ? WHERE id = (SELECT id FROM loans WHERE user_id = ? AND book_id = ? and active = ? LIMIT 1)"
 
 func NewLoanRepository(db *gorm.DB) *LoanRepository {
@@ -46,7 +46,7 @@ func (repo *LoanRepository) DeactivateActiveLoanForUserAndBookIncreaseBookQuanti
 
 	tx := repo.db.Begin()
 
-	if err := tx.Exec(decrease_book_quantity_query, bookId).Error; err != nil {
+	if err := tx.Exec(increase_book_quantity_query, bookId).Error; err != nil {
 		tx.Rollback()
 
 		return err
